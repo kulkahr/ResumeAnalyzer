@@ -1,0 +1,26 @@
+# Maven/Java
+resumeanalyzer/target/
+*.log
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE
+.idea/
+resumeanalyzer/.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+resumeanalyzer/.vscode/
+
+# OS
+.DS_Store
+
+# Environment
+.env
+
+# Others
+node_modules/
+resumeanalyzer/.github/
