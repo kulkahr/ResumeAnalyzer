@@ -1,5 +1,5 @@
 # ---- ResumeAnalyzer Spring Boot ----
-FROM eclipse-temurin:17-jre-alpine AS resumeanalyzer
+FROM eclipse-temurin:17-jre AS resumeanalyzer
 WORKDIR /app
 COPY target/resumeanalyzer-1.0-SNAPSHOT.jar app.jar
 EXPOSE 8080
