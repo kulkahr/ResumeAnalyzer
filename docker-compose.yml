@@ -16,6 +16,8 @@ services:
     container_name: resumeanalyzer-frontend
     ports:
       - "3000:80"
+    environment:
+      BACKEND_HOST: ${BACKEND_HOST}
     depends_on:
       - backend
   db:
