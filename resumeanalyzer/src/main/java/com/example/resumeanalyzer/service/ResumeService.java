@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.resumeanalyzer.model.AnalysisRequest;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,9 +26,9 @@ public class ResumeService {
      * @return a JSONObject containing the extracted text
      * @throws IOException if an I/O error occurs
      */
-    public JSONObject processResume(MultipartFile file) throws IOException {
+    public JSONObject processResume(AnalysisRequest request) throws IOException {
         // Save the file and extract text
-        Path savedFile = saveResume(file);
+        Path savedFile = saveResume(request.getFile());
         return extractText(savedFile);
     }
     /**
