@@ -12,6 +12,7 @@ services:
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
     depends_on:
       - db
+      - aiagent
   frontend:
     build: ./resumeanalyzer-ui
     container_name: resumeanalyzer-frontend
@@ -35,17 +36,14 @@ services:
   aiagent:
     image: ollama/ollama:latest
     container_name: ollama
+    entrypoint: sh -c "ollama serve && ollama pull llama3 "
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama  # persist downloaded models
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]  # Optional: use GPU if supported
     environment:
       - OLLAMA_MODELS_PATH=/root/.ollama
 volumes:
   pgdata:
+  ollama_data:
