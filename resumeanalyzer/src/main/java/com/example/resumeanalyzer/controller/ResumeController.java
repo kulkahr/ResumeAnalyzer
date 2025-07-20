@@ -3,18 +3,18 @@ package com.example.resumeanalyzer.controller;
 import java.io.IOException;
 import java.time.Instant;
 
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.example.resumeanalyzer.annotation.ExtensionValidator;
+import com.example.resumeanalyzer.model.AnalysisRequest;
+import com.example.resumeanalyzer.model.AnalysisResponse;
 import com.example.resumeanalyzer.service.ResumeService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,18 +26,19 @@ public class ResumeController {
     private final ResumeService resumeService;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadResume(@RequestParam("file") @ExtensionValidator(allowed={"pdf","docx"}) MultipartFile file) {
-        if (file.isEmpty()) {
-            log.warn("Upload attempt with empty file at {}", Instant.now());
-            return ResponseEntity.badRequest().body("No file uploaded");
-        }
+    public ResponseEntity<AnalysisResponse> uploadResume(@Valid @ModelAttribute AnalysisRequest request) {
         try {
-            JSONObject savedFileData = resumeService.processResume(file);
-            log.info("File '{}' uploaded and saved at {}", file.getOriginalFilename(), Instant.now());
-            return ResponseEntity.ok(savedFileData.toString());
+            AnalysisResponse response = resumeService.processResume(request);
+            log.info("File '{}' uploaded and saved at {}", request.getFile().getOriginalFilename(), Instant.now());
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             log.error("Failed to save uploaded file: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save file");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(AnalysisResponse.builder().errors("Failed to save file").build());
+        } catch (Exception e) {
+            log.error("Unexpected error during file upload: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(AnalysisResponse.builder().errors("Unexpected error occurred").build());
         }
     }
 }

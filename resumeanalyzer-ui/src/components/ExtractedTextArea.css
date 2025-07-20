@@ -22,3 +22,15 @@
     color: #1f2937;
     resize: none;
 }
+
+.extracted-text-area-xs textarea {
+    height: 3rem;
+}
+
+.extracted-text-area-small textarea {
+    height: 5rem;
+}
+
+.extracted-text-area-medium textarea {
+    height: 12rem;
+}

@@ -6,7 +6,11 @@ interface ErrorPopupProps {
 }
 
 const ErrorPopup: React.FC<ErrorPopupProps> = ({ message }) => (
-    <div className="error-popup">
+    <div
+        className="error-popup"
+        role="alert"
+        aria-live="assertive"
+    >
         {message}
     </div>
 );

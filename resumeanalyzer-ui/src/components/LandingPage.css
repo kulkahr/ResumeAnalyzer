@@ -22,7 +22,8 @@
 
 @media (min-width: 640px) {
     .landing-page-title {
-        font-size: 1.875rem;
+        font-size: 3rem;
+        /* ↑ enlarge for wider screens (example) */
     }
 }
 
