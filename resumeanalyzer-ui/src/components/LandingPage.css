@@ -1,0 +1,44 @@
+.landing-page-container {
+    min-height: 100vh;
+    width: 100vw;
+    background-color: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 4rem;
+    box-sizing: border-box;
+}
+
+
+.landing-page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2.5rem;
+    color: #22223b;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .landing-page-title {
+        font-size: 3rem;
+        /* ↑ enlarge for wider screens (example) */
+    }
+}
+
+.landing-page-card {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 0.75rem;
+    padding: 2rem 2.5rem 2rem 2.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 32rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+}
