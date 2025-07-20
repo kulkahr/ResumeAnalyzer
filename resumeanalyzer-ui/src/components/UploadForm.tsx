@@ -14,6 +14,13 @@ const UploadForm: React.FC<UploadFormProps> = ({ loading, onFileChange }) => {
             className="upload-form"
             onSubmit={e => e.preventDefault()}
         >
+            <input
+                id="jobRole"
+                type="text"
+                placeholder="Enter Job Role"
+                className="job-role-input"
+                required
+            />
             <label htmlFor="file">
                 Upload Resume (PDF or DOCX, max 2MB):
             </label>

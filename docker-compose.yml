@@ -36,7 +36,7 @@ services:
   aiagent:
     image: ollama/ollama:latest
     container_name: ollama
-    entrypoint: sh -c "ollama serve && ollama pull llama3 "
+    entrypoint: ["/bin/sh", "-c", "(sleep 5; ollama pull llama3) & ollama serve"]
     ports:
       - "11434:11434"
     volumes:
