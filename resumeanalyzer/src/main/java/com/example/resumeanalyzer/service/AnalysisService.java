@@ -4,16 +4,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.resumeanalyzer.exception.Document;
 import com.example.resumeanalyzer.model.AnalysisResponse;
 import com.example.resumeanalyzer.model.AnalysisResponse.AnalysisResponseBuilder;
 
 import jakarta.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +34,8 @@ public class AnalysisService {
     private static final String SKILL_SET_PROMPT = "List the 10 top skills and key technical keywords required for the job role of \"%s\". Respond only with comma-separated lowercase words, no explanations, no bullet points.";
 
     private final AiService aiService;
+
+    private final ValidationProcessorService documentValidationService;
 
     /**
      * Initializes the service with predefined skill sets for different job roles.
@@ -78,10 +83,28 @@ public class AnalysisService {
      * @param resumeText The text content of the resume to analyze.
      * @return AnalysisResponse containing the skills found in the resume.
      */
-    public AnalysisResponse analyze(String resumeText, String jobRole) {
+    public AnalysisResponse analyze(@NotNull Document resumeDocument, String jobRole) {
+        String resumeText = resumeDocument.getDocumentText();
+        if (resumeText.isEmpty()) {
+            log.warn("Resume text is empty or null.");
+            return AnalysisResponse.builder()
+                    .matchedSkills(new HashSet<>())
+                    .missingSkills(new HashSet<>(getSkillsForJobRole(jobRole.toLowerCase())))
+                    .score(0)
+                    .build();
+        }
+        if (jobRole == null || jobRole.isEmpty()) {
+            log.warn("Job role is empty or null, using default 'software engineer'.");
+            jobRole = "software engineer";
+        }
         String summary = aiService.ask(RESUME_ANALYSIS_PROMPT.formatted(
                 jobRole, resumeText));
-        return analyzeSkillsInResume(resumeText, getSkillsForJobRole(jobRole.toLowerCase())).summary(summary)
+        List<String> validationErrors = documentValidationService.validate(resumeDocument).stream()
+                .map(e -> e.getMessage())
+                .toList();
+        return analyzeSkillsInResume(resumeText, getSkillsForJobRole(jobRole.toLowerCase()))
+                .summary(summary)
+                .validationErrors(validationErrors)
                 .build();
     }
 
@@ -90,7 +113,8 @@ public class AnalysisService {
      * 
      * @param resumeText       The text content of the resume to analyze.
      * @param requiredSkillSet The set of skills required for the job role.
-     * @return AnalysisResponse containing matched and missing skills along with a
+     * @return AnalysisResponseBuilder containing matched and missing skills along
+     *         with a
      *         score.
      */
     private AnalysisResponseBuilder analyzeSkillsInResume(String resumeText, HashSet<String> requiredSkillSet) {
