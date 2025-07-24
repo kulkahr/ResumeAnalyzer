@@ -3,11 +3,13 @@ import UploadForm from './UploadForm';
 import ExtractedTextArea from './ExtractedTextArea';
 import ErrorPopup from './ErrorPopup';
 import './LandingPage.css';
+import ValidationMessage from './ValidationMessage';
 
 const LandingPage: React.FC = () => {
     const [fileContent, setFileContent] = useState('');
     const [matchedSkills, setMatchedSkills] = useState<string[]>();
     const [missingSkills, setMissingSkills] = useState<string[]>();
+    const [validationMessages, setValidationMessages] = useState<string[]>([]);
     const [score, setScore] = useState<number>();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -51,11 +53,24 @@ const LandingPage: React.FC = () => {
             const contentType = res.headers.get('content-type');
             if (res.ok && contentType && contentType.includes('application/json')) {
                 const data = await res.json();
-                if (typeof data.summary === 'string' && typeof data.matchedSkills === 'object' && Array.isArray(data.matchedSkills) && typeof data.missingSkills === 'object' && Array.isArray(data.missingSkills) && typeof data.score === 'number') {
+                // Extract complex response validation into its own helper for readability
+                const isValidResponse = (data: any): boolean => {
+                    return typeof data.summary === 'string' &&
+                        typeof data.matchedSkills === 'object' && Array.isArray(data.matchedSkills) &&
+                        typeof data.missingSkills === 'object' && Array.isArray(data.missingSkills) &&
+                        typeof data.score === 'number' &&
+                        (!data.validationErrors || Array.isArray(data.validationErrors));
+                };
+
+                // ...
+
+                // Replace the in-place conditional with the extracted helper
+                if (isValidResponse(data)) {
                     setFileContent(data.summary);
                     setMatchedSkills(data.matchedSkills);
                     setMissingSkills(data.missingSkills);
-                    setScore(data.score || []);
+                    setScore(data.score || 0);
+                    setValidationMessages(data.validationErrors || []);
                 } else {
                     setError('Unexpected response from server.');
                 }
@@ -89,6 +104,16 @@ const LandingPage: React.FC = () => {
                 {matchedSkills && <ExtractedTextArea id="matched-keywords" label="Keywords Found" value={matchedSkills.join(",")} size='medium' />}
                 {missingSkills && <ExtractedTextArea id="missing-keywords" label="Keywords Missing" value={missingSkills.join(",")} size='medium' />}
                 {score && <ExtractedTextArea id="score" label="Final Score" value={score.toString()} size='xs' />}
+                {validationMessages.length > 0 && (
+                    <div className="validation-messages">
+                        {validationMessages.map((msg, index) => (
+                            <ValidationMessage key={'error-${index}'} id={index} message={msg} type='error' />
+                        ))}
+                    </div>
+                )}
+                {validationMessages && fileContent && validationMessages.length === 0 && (
+                    <ValidationMessage key="success" id={0} message="Validations Passed" type='success' />
+                )}
             </div>
             {error && <ErrorPopup message={error} />}
         </div>
