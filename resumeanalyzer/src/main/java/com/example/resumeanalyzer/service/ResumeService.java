@@ -11,6 +11,7 @@ import org.apache.tika.exception.TikaException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.resumeanalyzer.exception.Document;
 import com.example.resumeanalyzer.model.AnalysisRequest;
 import com.example.resumeanalyzer.model.AnalysisResponse;
 
@@ -41,7 +42,10 @@ public class ResumeService {
         }
         log.info("Processing resume file: {}", request.getFile().getOriginalFilename());
         Path savedFile = saveResume(request.getFile());
-        return analysisService.analyze(extractText(savedFile), request.getJobRole());
+        Document document = new Document(
+                request.getFile().getOriginalFilename(),
+                extractText(savedFile));
+        return analysisService.analyze(document, request.getJobRole());
     }
 
     /**

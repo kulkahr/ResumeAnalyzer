@@ -20,6 +20,7 @@ A full-stack resume analysis platform with:
 - Node.js (for local frontend development)
 - Java 17 & Maven (for local backend development)
 - Ollama (model - llama3 ) (for local backend development)
+OpenNLP binary (download the latest model from https://opennlp.sourceforge.net/models-1.5/)
 
 ### Local Development
 1. Build backend:

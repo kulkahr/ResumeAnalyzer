@@ -1,0 +1,12 @@
+.validation-message {
+    width: 100%;
+    max-width: 28rem;
+    margin-bottom: 1rem;
+    display: block;
+    /* ensures width / height are respected */
+    min-height: 3rem;
+    /* retains baseline spacing yet allows auto growth */
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+}

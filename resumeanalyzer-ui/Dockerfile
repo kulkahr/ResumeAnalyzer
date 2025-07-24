@@ -1,6 +1,10 @@
 # ---- ResumeAnalyzer UI (React + Nginx) ----
 FROM node:20-alpine AS build
 WORKDIR /app
+
+# Ensure PATH includes node_modules/.bin
+ENV PATH="./resumeanalyzer-ui/node_modules/.bin:$PATH"
+
 COPY . .
 RUN npm install && npm run build
 
