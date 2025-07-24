@@ -1,0 +1,19 @@
+{
+    "properties": [
+        {
+            "name": "config.developer.email",
+            "type": "java.lang.String",
+            "description": "Define Developers email for contact information. Default is 'Not Provided'."
+        },
+        {
+            "name": "config.developer.name",
+            "type": "java.lang.String",
+            "description": "Define Developers name for contact information. Default is 'Not Provided'."
+        },
+        {
+            "name": "config.version",
+            "type": "java.lang.String",
+            "description": "Version of the API. Default is 'v1.0'."
+        }
+    ]
+}
