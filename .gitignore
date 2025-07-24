@@ -45,3 +45,4 @@ resumeanalyzer-ui/lerna-debug.log*
 # Others
 resumeanalyzer-ui/node_modules/
 resumeanalyzer/.github/
+resumeanalyzer/src/main/resources/nlp_models/
